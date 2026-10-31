@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag("js",new Date());gtag("config","G-XXXXXXXXXX");</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HueLab — Free Color Tools | Palette Generator, Gradient Maker, Contrast Checker</title>
+<meta name="description" content="Free online color tools: generate color palette from image, create CSS gradients, check WCAG contrast, convert HEX/RGB/HSL, mix colors. All in your browser — instant, no signup.">
+<meta name="keywords" content="color palette generator from image, css gradient generator, color contrast checker wcag, hex to rgb converter, color mixer online, color palette extractor, gradient maker free">
+<link rel="canonical" href="https://nxtcraft.github.io/huelab/">
+<meta property="og:title" content="HueLab — Free Color Palette, Gradient & Contrast Tools">
+<meta property="og:description" content="5 color tools in one place. Extract palettes, build gradients, check contrast, convert and mix colors. Free, instant, no upload.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://nxtcraft.github.io/huelab/">
+<meta name="twitter:card" content="summary_large_image">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"HueLab","url":"https://nxtcraft.github.io/huelab/","description":"Free browser-based color tools."}</script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,'Inter',BlinkMacSystemFont,sans-serif;background:#fff1f2;color:#1c0a0d;min-height:100vh}
+a{color:inherit;text-decoration:none}
+nav{background:#fff;border-bottom:1px solid #fecdd3;padding:0 20px;height:54px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:20}
+.logo{font-size:19px;font-weight:800}.logo span{color:#e11d48}
+.nav-tag{font-size:11px;background:#fff1f2;color:#e11d48;padding:3px 10px;border-radius:20px;font-weight:600}
+.tabs-bar{background:#fff;border-bottom:2px solid #fecdd3;padding:0 16px;display:flex;overflow-x:auto;scrollbar-width:none;position:sticky;top:54px;z-index:19}
+.tabs-bar::-webkit-scrollbar{display:none}
+.tab{padding:13px 15px;font-size:13px;font-weight:600;color:#6b7280;cursor:pointer;border-bottom:2.5px solid transparent;margin-bottom:-2px;white-space:nowrap;transition:all .15s;display:flex;align-items:center;gap:6px}
+.tab:hover{color:#e11d48}
+.tab.active{color:#e11d48;border-bottom-color:#e11d48}
+.tool-panel{display:none;max-width:860px;margin:0 auto;padding:28px 16px 60px}
+.tool-panel.active{display:block}
+h2{font-size:22px;font-weight:800;margin-bottom:5px;color:#1c0a0d}
+.subtitle{font-size:13px;color:#6b7280;margin-bottom:22px}
+.card{background:#fff;border-radius:14px;border:1.5px solid #fecdd3;padding:18px 20px;margin-bottom:14px}
+.card-title{font-size:12px;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px}
+.btn-primary{background:#e11d48;color:#fff;padding:10px 22px;border-radius:10px;font-size:13px;font-weight:700;border:none;cursor:pointer;display:inline-flex;align-items:center;gap:7px}
+.btn-primary:hover{background:#be123c}
+.btn-sec{background:#fff1f2;color:#e11d48;padding:10px 18px;border-radius:10px;font-size:13px;font-weight:600;border:1.5px solid #fecdd3;cursor:pointer}
+.btn-sec:hover{background:#ffe4e6}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.upload-zone{border:2.5px dashed #fda4af;border-radius:16px;padding:44px 20px;text-align:center;cursor:pointer;transition:all .2s;background:#fff;margin-bottom:20px}
+.upload-zone:hover,.upload-zone.drag{border-color:#e11d48;background:#fff1f2}
+.up-icon{font-size:40px;margin-bottom:10px}
+.up-title{font-size:15px;font-weight:700;margin-bottom:3px}
+.up-sub{font-size:12px;color:#9ca3af}
+.upload-btn{display:inline-block;margin-top:12px;background:#e11d48;color:#fff;padding:10px 22px;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;border:none}
+.upload-btn:hover{background:#be123c}
+.tip{background:#fff1f2;border-left:3px solid #e11d48;border-radius:8px;padding:10px 14px;font-size:12px;color:#9f1239;margin-top:14px;line-height:1.6}
+.copy-toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%);background:#1c0a0d;color:#fff;padding:9px 20px;border-radius:10px;font-size:13px;font-weight:600;opacity:0;transition:opacity .3s;pointer-events:none;z-index:999}
+.copy-toast.show{opacity:1}
+footer{text-align:center;padding:22px;font-size:12px;color:#e11d48;border-top:1px solid #fecdd3}
+footer a{color:#e11d48}
+
+/* Palette */
+.palette-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(90px,1fr));gap:10px;margin-bottom:14px}
+.swatch{border-radius:12px;overflow:hidden;cursor:pointer;border:1.5px solid #fecdd3;transition:transform .15s}
+.swatch:hover{transform:scale(1.04)}
+.swatch-color{height:72px;width:100%}
+.swatch-hex{font-size:11px;font-weight:700;text-align:center;padding:6px 4px;background:#fff;color:#1c0a0d;letter-spacing:.5px}
+
+/* Gradient */
+.grad-preview{width:100%;height:160px;border-radius:12px;border:1.5px solid #fecdd3;margin-bottom:14px;transition:all .3s}
+.grad-stop-row{display:flex;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap}
+.color-input-wrap{position:relative;width:36px;height:36px;border-radius:8px;overflow:hidden;border:1.5px solid #fecdd3;flex-shrink:0}
+.color-input-wrap input[type=color]{position:absolute;inset:-4px;width:calc(100%+8px);height:calc(100%+8px);border:none;cursor:pointer;padding:0}
+.pos-input{width:64px;padding:7px 8px;border:1.5px solid #fecdd3;border-radius:8px;font-size:13px;text-align:center;color:#1c0a0d}
+.pos-input:focus{outline:none;border-color:#e11d48}
+.rm-btn{background:none;border:none;cursor:pointer;color:#9ca3af;font-size:18px;line-height:1}
+.rm-btn:hover{color:#e11d48}
+.dir-btns{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.dir-btn{padding:8px 14px;border-radius:8px;border:1.5px solid #fecdd3;background:#fff;font-size:13px;cursor:pointer;color:#6b7280;transition:all .15s}
+.dir-btn:hover,.dir-btn.active{border-color:#e11d48;color:#e11d48;background:#fff1f2}
+.code-block{background:#1c0a0d;color:#fda4af;padding:14px 16px;border-radius:10px;font-size:12px;font-family:monospace;line-height:1.7;word-break:break-all;position:relative;margin-bottom:10px}
+.code-copy{position:absolute;top:8px;right:8px;background:#e11d48;color:#fff;border:none;border-radius:6px;padding:4px 10px;font-size:11px;cursor:pointer;font-weight:600}
+.code-copy:hover{background:#be123c}
+
+/* Contrast */
+.contrast-preview{border-radius:12px;padding:24px;text-align:center;margin-bottom:14px;border:1.5px solid #fecdd3;min-height:100px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px}
+.contrast-ratio{font-size:36px;font-weight:900;margin-bottom:8px}
+.wcag-badges{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:14px}
+.badge{padding:7px 14px;border-radius:8px;font-size:12px;font-weight:700;display:flex;align-items:center;gap:5px}
+.badge.pass{background:#dcfce7;color:#166534}
+.badge.fail{background:#fef2f2;color:#991b1b}
+.color-pickers-row{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:14px}
+.cp-group{flex:1;min-width:160px}
+.cp-group label{font-size:12px;font-weight:700;color:#6b7280;display:block;margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px}
+.cp-row{display:flex;align-items:center;gap:8px}
+.cp-row .color-input-wrap{width:44px;height:44px;border-radius:10px}
+.cp-row input[type=text]{flex:1;padding:10px 12px;border:1.5px solid #fecdd3;border-radius:10px;font-size:14px;font-family:monospace;color:#1c0a0d}
+.cp-row input[type=text]:focus{outline:none;border-color:#e11d48}
+
+/* Converter */
+.big-swatch{width:100%;height:100px;border-radius:14px;border:1.5px solid #fecdd3;margin-bottom:14px;transition:background .2s}
+.conv-input{width:100%;padding:12px 16px;border:1.5px solid #fecdd3;border-radius:12px;font-size:16px;font-family:monospace;color:#1c0a0d;margin-bottom:14px}
+.conv-input:focus{outline:none;border-color:#e11d48}
+.conv-row{display:flex;align-items:center;gap:10px;padding:10px 14px;background:#fff;border:1.5px solid #fecdd3;border-radius:10px;margin-bottom:8px;cursor:pointer;transition:all .15s}
+.conv-row:hover{border-color:#e11d48;background:#fff1f2}
+.conv-label{font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:.5px;min-width:38px}
+.conv-value{font-size:14px;font-family:monospace;color:#1c0a0d;flex:1}
+.conv-copy-icon{font-size:14px;color:#9ca3af}
+.preset-chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.preset-chip{width:32px;height:32px;border-radius:8px;cursor:pointer;border:2px solid transparent;transition:all .15s}
+.preset-chip:hover{transform:scale(1.15);border-color:#1c0a0d}
+
+/* Mixer */
+.mixer-pickers{display:flex;gap:20px;margin-bottom:20px;flex-wrap:wrap}
+.mixer-cp{flex:1;min-width:140px}
+.mixer-cp label{font-size:12px;font-weight:700;color:#6b7280;display:block;margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px}
+.mixer-cp .cp-row .color-input-wrap{width:44px;height:44px;border-radius:10px}
+.mix-steps{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.mix-step{flex:1;min-width:80px;cursor:pointer;border-radius:12px;overflow:hidden;border:1.5px solid #fecdd3;transition:transform .15s;text-align:center}
+.mix-step:hover{transform:scale(1.04)}
+.mix-step-color{height:64px}
+.mix-step-info{padding:6px 4px;background:#fff;font-size:10px;font-weight:700;color:#1c0a0d}
+.mix-step-pct{font-size:10px;color:#9ca3af;margin-top:1px}
+.mix-step-css{font-size:9px;color:#6b7280;font-family:monospace;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:2px 4px 6px}
+.mix-ratio-row{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.mix-ratio-row label{font-size:13px;font-weight:600;min-width:80px}
+input[type=range]{accent-color:#e11d48;flex:1}
+</style>
+</head>
+<body>
+
+<div class="copy-toast" id="copy-toast">Copied!</div>
+
+<nav>
+  <div class="logo">Hue<span>Lab</span></div>
+  <div class="nav-tag">Free · Instant · No Signup</div>
+</nav>
+
+<div class="tabs-bar">
+  <div class="tab active" onclick="switchTab('palette',this)">🎨 Palette</div>
+  <div class="tab" onclick="switchTab('gradient',this)">🌈 Gradient</div>
+  <div class="tab" onclick="switchTab('contrast',this)">✅ Contrast</div>
+  <div class="tab" onclick="switchTab('converter',this)">🔄 Converter</div>
+  <div class="tab" onclick="switchTab('mixer',this)">🎭 Mixer</div>
+</div>
+
+<!-- PALETTE GENERATOR -->
+<div id="panel-palette" class="tool-panel active">
+  <h2>Color Palette Generator</h2>
+  <p class="subtitle">Upload any image to extract its dominant colors as a palette.</p>
+  <div class="upload-zone" id="pal-drop">
+    <div class="up-icon">🖼️</div>
+    <div class="up-title">Drop an image here</div>
+    <div class="up-sub">JPG, PNG, WebP, GIF — any image</div>
+    <button class="upload-btn" onclick="document.getElementById('pal-file').click()">Choose Image</button>
+  </div>
+  <input type="file" id="pal-file" accept="image/*" style="display:none">
+  <canvas id="pal-canvas" style="display:none"></canvas>
+  <div id="pal-result" style="display:none">
+    <div class="card">
+      <div class="card-title">Dominant Colors — click any swatch to copy HEX</div>
+      <div class="palette-grid" id="pal-swatches"></div>
+    </div>
+    <div class="actions">
+      <button class="btn-primary" onclick="palDownload()">⬇️ Download Palette PNG</button>
+      <button class="btn-sec" onclick="palReset()">New image</button>
+    </div>
+  </div>
+  <div class="tip">💡 Works entirely in your browser — your image never leaves your device.</div>
+</div>
+
+<!-- GRADIENT MAKER -->
+<div id="panel-gradient" class="tool-panel">
+  <h2>CSS Gradient Maker</h2>
+  <p class="subtitle">Build linear or radial gradients and copy the CSS instantly.</p>
+  <div id="grad-preview" class="grad-preview"></div>
+  <div class="card">
+    <div class="card-title">Direction</div>
+    <div class="dir-btns">
+      <button class="dir-btn active" data-dir="to right" onclick="gradDirSelect(this)">→ Right</button>
+      <button class="dir-btn" data-dir="to bottom" onclick="gradDirSelect(this)">↓ Down</button>
+      <button class="dir-btn" data-dir="135deg" onclick="gradDirSelect(this)">↘ Diagonal</button>
+      <button class="dir-btn" data-dir="radial" onclick="gradDirSelect(this)">⭕ Radial</button>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">Color Stops</div>
+    <div id="grad-stops"></div>
+    <div class="actions" style="margin-top:8px">
+      <button class="btn-primary" onclick="gradAddStop()">+ Add Stop</button>
+      <button class="btn-sec" onclick="gradReverse()">⇄ Reverse</button>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">Generated CSS</div>
+    <div class="code-block" id="grad-css-block">
+      <button class="code-copy" onclick="copyText(document.getElementById('grad-css').textContent)">Copy</button>
+      <span id="grad-css"></span>
+    </div>
+  </div>
+</div>
+
+<!-- CONTRAST CHECKER -->
+<div id="panel-contrast" class="tool-panel">
+  <h2>Color Contrast Checker</h2>
+  <p class="subtitle">Check if your color combination meets WCAG accessibility standards.</p>
+  <div class="color-pickers-row">
+    <div class="cp-group">
+      <label>Foreground</label>
+      <div class="cp-row">
+        <div class="color-input-wrap"><input type="color" id="cc-fg" value="#1c0a0d" oninput="ccUpdate()"></div>
+        <input type="text" id="cc-fg-hex" value="#1c0a0d" oninput="ccHexInput('fg')" placeholder="#000000">
+      </div>
+    </div>
+    <div style="display:flex;align-items:flex-end;padding-bottom:2px">
+      <button class="btn-sec" onclick="ccSwap()" title="Swap colors">⇄ Swap</button>
+    </div>
+    <div class="cp-group">
+      <label>Background</label>
+      <div class="cp-row">
+        <div class="color-input-wrap"><input type="color" id="cc-bg" value="#ffffff" oninput="ccUpdate()"></div>
+        <input type="text" id="cc-bg-hex" value="#ffffff" oninput="ccHexInput('bg')" placeholder="#ffffff">
+      </div>
+    </div>
+  </div>
+  <div class="contrast-preview" id="cc-preview">
+    <div style="font-size:22px;font-weight:900" id="cc-preview-large">Large Text Sample</div>
+    <div style="font-size:14px" id="cc-preview-normal">Normal body text — this is how it looks at regular size.</div>
+  </div>
+  <div style="text-align:center;margin-bottom:14px">
+    <div class="contrast-ratio" id="cc-ratio">—</div>
+    <div style="font-size:13px;color:#6b7280">Contrast Ratio</div>
+  </div>
+  <div class="wcag-badges" id="cc-badges"></div>
+  <div class="tip">💡 AA Normal (4.5:1) is the minimum for body text. AAA (7:1) is ideal. Large text ≥18pt or ≥14pt bold.</div>
+</div>
+
+<!-- COLOR CONVERTER -->
+<div id="panel-converter" class="tool-panel">
+  <h2>Color Format Converter</h2>
+  <p class="subtitle">Type any color in HEX, RGB, or HSL — get all formats instantly.</p>
+  <div id="conv-swatch" class="big-swatch" style="background:#e11d48"></div>
+  <input class="conv-input" id="conv-input" placeholder="#e11d48 or rgb(225,29,72) or hsl(347,76%,50%)" oninput="convParse(this.value)">
+  <div class="card" style="padding:12px 14px">
+    <div class="card-title">Click any row to copy</div>
+    <div class="conv-row" onclick="copyText(document.getElementById('cv-hex').textContent)">
+      <span class="conv-label">HEX</span><span class="conv-value" id="cv-hex">#e11d48</span><span class="conv-copy-icon">📋</span>
+    </div>
+    <div class="conv-row" onclick="copyText(document.getElementById('cv-rgb').textContent)">
+      <span class="conv-label">RGB</span><span class="conv-value" id="cv-rgb">rgb(225, 29, 72)</span><span class="conv-copy-icon">📋</span>
+    </div>
+    <div class="conv-row" onclick="copyText(document.getElementById('cv-hsl').textContent)">
+      <span class="conv-label">HSL</span><span class="conv-value" id="cv-hsl">hsl(347, 76%, 50%)</span><span class="conv-copy-icon">📋</span>
+    </div>
+    <div class="conv-row" onclick="copyText(document.getElementById('cv-hsv').textContent)">
+      <span class="conv-label">HSV</span><span class="conv-value" id="cv-hsv">hsv(347, 87%, 88%)</span><span class="conv-copy-icon">📋</span>
+    </div>
+  </div>
+  <div class="card" style="padding:14px 16px">
+    <div class="card-title">Preset Colors</div>
+    <div class="preset-chips" id="preset-chips"></div>
+  </div>
+</div>
+
+<!-- COLOR MIXER -->
+<div id="panel-mixer" class="tool-panel">
+  <h2>Color Mixer</h2>
+  <p class="subtitle">Mix two colors together — see every step and copy the result.</p>
+  <div class="mixer-pickers">
+    <div class="mixer-cp">
+      <label>Color A</label>
+      <div class="cp-row">
+        <div class="color-input-wrap"><input type="color" id="mix-a" value="#e11d48" oninput="mixUpdate()"></div>
+        <input type="text" id="mix-a-hex" value="#e11d48" oninput="mixHexInput('a')" style="flex:1;padding:10px 12px;border:1.5px solid #fecdd3;border-radius:10px;font-size:14px;font-family:monospace;color:#1c0a0d">
+      </div>
+    </div>
+    <div class="mixer-cp">
+      <label>Color B</label>
+      <div class="cp-row">
+        <div class="color-input-wrap"><input type="color" id="mix-b" value="#1d4ed8" oninput="mixUpdate()"></div>
+        <input type="text" id="mix-b-hex" value="#1d4ed8" oninput="mixHexInput('b')" style="flex:1;padding:10px 12px;border:1.5px solid #fecdd3;border-radius:10px;font-size:14px;font-family:monospace;color:#1c0a0d">
+      </div>
+    </div>
+  </div>
+  <div class="mix-ratio-row">
+    <label>Mix ratio</label>
+    <input type="range" id="mix-ratio" min="0" max="100" value="50" oninput="mixUpdate()">
+    <span id="mix-ratio-val" style="font-size:13px;font-weight:700;min-width:36px;text-align:right">50%</span>
+  </div>
+  <div class="mix-steps" id="mix-steps"></div>
+  <div class="tip">💡 Click any swatch to copy its HEX value. Mixing uses linear RGB interpolation for accurate results.</div>
+</div>
+
+<footer><a href="https://nxtcraft.github.io/">NxtCraft Free Tools</a> · <a href="https://nxtcraft.github.io/imglab/">ImgLab</a> · Colors stay in your browser</footer>
+
+<script>
+// ── Tab switching ────────────────────────────────────────
+function switchTab(id,el){
+  document.querySelectorAll('.tool-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('panel-'+id).classList.add('active');
+  el.classList.add('active');
+  history.replaceState(null,'','#'+id);
+}
+(function(){
+  const h=location.hash.slice(1);
+  const map={palette:0,gradient:1,contrast:2,converter:3,mixer:4};
+  if(h in map){const tabs=document.querySelectorAll('.tab');switchTab(h,tabs[map[h]]);}
+})();
+
+// ── Copy helper ──────────────────────────────────────────
+function copyText(text){
+  navigator.clipboard.writeText(text).catch(()=>{
+    const t=document.createElement('textarea');t.value=text;document.body.appendChild(t);t.select();document.execCommand('copy');document.body.removeChild(t);
+  });
+  const toast=document.getElementById('copy-toast');
+  toast.textContent='Copied: '+text;
+  toast.classList.add('show');
+  setTimeout(()=>toast.classList.remove('show'),1800);
+}
+
+// ── Color math ──────────────────────────────────────────
+function hexToRgb(hex){
+  hex=hex.replace(/^#/,'');
+  if(hex.length===3)hex=hex.split('').map(c=>c+c).join('');
+  const n=parseInt(hex,16);
+  return{r:(n>>16)&255,g:(n>>8)&255,b:n&255};
+}
+function rgbToHex(r,g,b){
+  return'#'+[r,g,b].map(v=>Math.round(v).toString(16).padStart(2,'0')).join('');
+}
+function rgbToHsl(r,g,b){
+  r/=255;g/=255;b/=255;
+  const max=Math.max(r,g,b),min=Math.min(r,g,b);
+  let h,s,l=(max+min)/2;
+  if(max===min){h=s=0;}else{
+    const d=max-min;
+    s=l>0.5?d/(2-max-min):d/(max+min);
+    switch(max){case r:h=((g-b)/d+(g<b?6:0))/6;break;case g:h=((b-r)/d+2)/6;break;default:h=((r-g)/d+4)/6;}
+  }
+  return{h:Math.round(h*360),s:Math.round(s*100),l:Math.round(l*100)};
+}
+function hslToRgb(h,s,l){
+  s/=100;l/=100;
+  const k=n=>(n+h/30)%12;
+  const a=s*Math.min(l,1-l);
+  const f=n=>l-a*Math.max(-1,Math.min(k(n)-3,Math.min(9-k(n),1)));
+  return{r:Math.round(f(0)*255),g:Math.round(f(8)*255),b:Math.round(f(4)*255)};
+}
+function rgbToHsv(r,g,b){
+  r/=255;g/=255;b/=255;
+  const max=Math.max(r,g,b),min=Math.min(r,g,b),d=max-min;
+  let h=0;
+  if(d){
+    switch(max){case r:h=((g-b)/d)%6;break;case g:h=(b-r)/d+2;break;default:h=(r-g)/d+4;}
+    h=Math.round(h*60);if(h<0)h+=360;
+  }
+  return{h,s:Math.round(max?d/max*100:0),v:Math.round(max*100)};
+}
+function parseColor(str){
+  str=str.trim();
+  // HEX
+  if(/^#?[0-9a-fA-F]{3,8}$/.test(str)){
+    const hex=str.startsWith('#')?str:'#'+str;
+    const r=hexToRgb(hex);
+    if(r)return r;
+  }
+  // rgb(r,g,b)
+  let m=str.match(/rgb\s*\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)/i);
+  if(m)return{r:+m[1],g:+m[2],b:+m[3]};
+  // hsl(h,s%,l%)
+  m=str.match(/hsl\s*\(\s*(\d+)\s*,\s*(\d+)%?\s*,\s*(\d+)%?\s*\)/i);
+  if(m)return hslToRgb(+m[1],+m[2],+m[3]);
+  return null;
+}
+function relativeLuminance(r,g,b){
+  const lin=v=>{v/=255;return v<=0.04045?v/12.92:Math.pow((v+0.055)/1.055,2.4);};
+  return 0.2126*lin(r)+0.7152*lin(g)+0.0722*lin(b);
+}
+function contrastRatio(l1,l2){
+  const light=Math.max(l1,l2),dark=Math.min(l1,l2);
+  return(light+0.05)/(dark+0.05);
+}
+function mixColors(hex1,hex2,t){
+  // linear RGB interpolation
+  const a=hexToRgb(hex1),b=hexToRgb(hex2);
+  const lin=v=>Math.pow(v/255,2.2);
+  const unlin=v=>Math.round(Math.pow(v,1/2.2)*255);
+  const r=unlin(lin(a.r)*(1-t)+lin(b.r)*t);
+  const g=unlin(lin(a.g)*(1-t)+lin(b.g)*t);
+  const bv=unlin(lin(a.b)*(1-t)+lin(b.b)*t);
+  return rgbToHex(r,g,bv);
+}
+
+// ── PALETTE GENERATOR ──────────────────────────────────
+const palDrop=document.getElementById('pal-drop');
+palDrop.addEventListener('dragover',e=>{e.preventDefault();palDrop.classList.add('drag');});
+palDrop.addEventListener('dragleave',()=>palDrop.classList.remove('drag'));
+palDrop.addEventListener('drop',e=>{e.preventDefault();palDrop.classList.remove('drag');palLoad(e.dataTransfer.files[0]);});
+document.getElementById('pal-file').addEventListener('change',function(){palLoad(this.files[0]);});
+
+function palLoad(file){
+  if(!file||!file.type.startsWith('image/'))return;
+  const img=new Image();
+  const url=URL.createObjectURL(file);
+  img.onload=()=>{
+    const canvas=document.getElementById('pal-canvas');
+    const ctx=canvas.getContext('2d');
+    canvas.width=img.width;canvas.height=img.height;
+    ctx.drawImage(img,0,0);
+    URL.revokeObjectURL(url);
+    const colors=palExtract(ctx,img.width,img.height);
+    palRender(colors);
+  };
+  img.src=url;
+}
+function palExtract(ctx,w,h){
+  const pixels=[];
+  const samples=2000;
+  for(let i=0;i<samples;i++){
+    const x=Math.floor(Math.random()*w),y=Math.floor(Math.random()*h);
+    const d=ctx.getImageData(x,y,1,1).data;
+    if(d[3]>128)pixels.push([d[0],d[1],d[2]]);
+  }
+  // k-means with k=8
+  return palKMeans(pixels,8);
+}
+function palKMeans(pixels,k){
+  if(!pixels.length)return[];
+  let centers=[];
+  const step=Math.floor(pixels.length/k);
+  for(let i=0;i<k;i++)centers.push([...pixels[i*step]||pixels[0]]);
+  for(let iter=0;iter<12;iter++){
+    const clusters=Array.from({length:k},()=>[]);
+    for(const p of pixels){
+      let best=0,bestD=Infinity;
+      for(let c=0;c<k;c++){
+        const d=(p[0]-centers[c][0])**2+(p[1]-centers[c][1])**2+(p[2]-centers[c][2])**2;
+        if(d<bestD){bestD=d;best=c;}
+      }
+      clusters[best].push(p);
+    }
+    centers=clusters.map(cl=>{
+      if(!cl.length)return[128,128,128];
+      const s=[0,0,0];
+      for(const p of cl){s[0]+=p[0];s[1]+=p[1];s[2]+=p[2];}
+      return[s[0]/cl.length,s[1]/cl.length,s[2]/cl.length];
+    });
+  }
+  return centers.map(c=>rgbToHex(Math.round(c[0]),Math.round(c[1]),Math.round(c[2])));
+}
+function palRender(colors){
+  document.getElementById('pal-drop').style.display='none';
+  const grid=document.getElementById('pal-swatches');
+  grid.innerHTML='';
+  colors.forEach(hex=>{
+    const sw=document.createElement('div');
+    sw.className='swatch';
+    sw.innerHTML=`<div class="swatch-color" style="background:${hex}"></div><div class="swatch-hex">${hex}</div>`;
+    sw.onclick=()=>copyText(hex);
+    grid.appendChild(sw);
+  });
+  document.getElementById('pal-result').style.display='';
+  document.getElementById('pal-result')._colors=colors;
+}
+function palDownload(){
+  const colors=document.getElementById('pal-result')._colors||[];
+  const sw=80,pad=12,h=120;
+  const c=document.createElement('canvas');
+  c.width=colors.length*(sw+pad)+pad;c.height=h;
+  const ctx=c.getContext('2d');
+  ctx.fillStyle='#fff';ctx.fillRect(0,0,c.width,c.height);
+  colors.forEach((hex,i)=>{
+    const x=pad+i*(sw+pad);
+    ctx.fillStyle=hex;
+    ctx.beginPath();ctx.roundRect(x,pad,sw,sw-20,8);ctx.fill();
+    ctx.fillStyle='#1c0a0d';ctx.font='bold 11px monospace';
+    ctx.textAlign='center';ctx.fillText(hex,x+sw/2,pad+sw-2);
+  });
+  const a=document.createElement('a');a.download='palette.png';a.href=c.toDataURL();a.click();
+}
+function palReset(){
+  document.getElementById('pal-drop').style.display='';
+  document.getElementById('pal-result').style.display='none';
+  document.getElementById('pal-file').value='';
+}
+
+// ── GRADIENT MAKER ──────────────────────────────────────
+let gradStops=[{color:'#e11d48',pos:0},{color:'#1d4ed8',pos:100}];
+let gradDir='to right';
+
+function gradRender(){
+  const sorted=[...gradStops].sort((a,b)=>a.pos-b.pos);
+  const stopsStr=sorted.map(s=>`${s.color} ${s.pos}%`).join(', ');
+  let css;
+  if(gradDir==='radial'){
+    css=`background: radial-gradient(circle, ${stopsStr});`;
+  } else {
+    css=`background: linear-gradient(${gradDir}, ${stopsStr});`;
+  }
+  document.getElementById('grad-preview').style.cssText=`height:160px;border-radius:12px;border:1.5px solid #fecdd3;margin-bottom:14px;${css}`;
+  document.getElementById('grad-css').textContent=css;
+  gradRenderStops();
+}
+function gradRenderStops(){
+  const cont=document.getElementById('grad-stops');
+  cont.innerHTML='';
+  gradStops.forEach((stop,i)=>{
+    const row=document.createElement('div');
+    row.className='grad-stop-row';
+    row.innerHTML=`
+      <div class="color-input-wrap"><input type="color" value="${stop.color}" oninput="gradStops[${i}].color=this.value;gradRender()"></div>
+      <input class="pos-input" type="number" min="0" max="100" value="${stop.pos}" oninput="gradStops[${i}].pos=+this.value;gradRender()" style="width:64px">
+      <span style="font-size:12px;color:#9ca3af">%</span>
+      ${gradStops.length>2?`<button class="rm-btn" onclick="gradRemove(${i})">✕</button>`:''}
+    `;
+    cont.appendChild(row);
+  });
+}
+function gradAddStop(){
+  if(gradStops.length>=5)return;
+  gradStops.push({color:'#f97316',pos:Math.round((gradStops[gradStops.length-1].pos+100)/2)});
+  gradRender();
+}
+function gradRemove(i){
+  if(gradStops.length<=2)return;
+  gradStops.splice(i,1);gradRender();
+}
+function gradDirSelect(el){
+  document.querySelectorAll('.dir-btn').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  gradDir=el.dataset.dir;
+  gradRender();
+}
+function gradReverse(){
+  gradStops=gradStops.map(s=>({color:s.color,pos:100-s.pos}));
+  gradRender();
+}
+gradRender();
+
+// ── CONTRAST CHECKER ────────────────────────────────────
+function ccUpdate(){
+  const fg=document.getElementById('cc-fg').value;
+  const bg=document.getElementById('cc-bg').value;
+  document.getElementById('cc-fg-hex').value=fg;
+  document.getElementById('cc-bg-hex').value=bg;
+  const prev=document.getElementById('cc-preview');
+  prev.style.background=bg;
+  ['cc-preview-large','cc-preview-normal'].forEach(id=>{
+    document.getElementById(id).style.color=fg;
+  });
+  const fgRgb=hexToRgb(fg),bgRgb=hexToRgb(bg);
+  const l1=relativeLuminance(fgRgb.r,fgRgb.g,fgRgb.b);
+  const l2=relativeLuminance(bgRgb.r,bgRgb.g,bgRgb.b);
+  const ratio=contrastRatio(l1,l2);
+  document.getElementById('cc-ratio').textContent=ratio.toFixed(2)+':1';
+  const checks=[
+    {label:'AA Normal',threshold:4.5},
+    {label:'AA Large',threshold:3.0},
+    {label:'AAA Normal',threshold:7.0},
+    {label:'AAA Large',threshold:4.5},
+  ];
+  const badgesCont=document.getElementById('cc-badges');
+  badgesCont.innerHTML='';
+  checks.forEach(c=>{
+    const pass=ratio>=c.threshold;
+    const b=document.createElement('div');
+    b.className='badge '+(pass?'pass':'fail');
+    b.innerHTML=`${pass?'✓':'✗'} ${c.label} (${c.threshold}:1)`;
+    badgesCont.appendChild(b);
+  });
+}
+function ccHexInput(which){
+  const el=document.getElementById('cc-'+which+'-hex');
+  const val=el.value.trim();
+  const hex=val.startsWith('#')?val:'#'+val;
+  if(/^#[0-9a-fA-F]{6}$/.test(hex)){
+    document.getElementById('cc-'+which).value=hex;
+    ccUpdate();
+  }
+}
+function ccSwap(){
+  const fg=document.getElementById('cc-fg').value;
+  const bg=document.getElementById('cc-bg').value;
+  document.getElementById('cc-fg').value=bg;
+  document.getElementById('cc-bg').value=fg;
+  ccUpdate();
+}
+ccUpdate();
+
+// ── COLOR CONVERTER ─────────────────────────────────────
+const PRESETS=['#e11d48','#f97316','#eab308','#22c55e','#14b8a6','#3b82f6','#8b5cf6','#ec4899','#ffffff','#000000','#6b7280','#f43f5e'];
+(function initPresets(){
+  const cont=document.getElementById('preset-chips');
+  PRESETS.forEach(hex=>{
+    const chip=document.createElement('div');
+    chip.className='preset-chip';
+    chip.style.background=hex;
+    chip.style.border='2px solid '+(hex==='#ffffff'?'#fecdd3':'transparent');
+    chip.title=hex;
+    chip.onclick=()=>{document.getElementById('conv-input').value=hex;convParse(hex);};
+    cont.appendChild(chip);
+  });
+})();
+
+function convParse(str){
+  const rgb=parseColor(str);
+  if(!rgb)return;
+  const{r,g,b}=rgb;
+  const hex=rgbToHex(r,g,b);
+  const hsl=rgbToHsl(r,g,b);
+  const hsv=rgbToHsv(r,g,b);
+  document.getElementById('conv-swatch').style.background=hex;
+  document.getElementById('cv-hex').textContent=hex;
+  document.getElementById('cv-rgb').textContent=`rgb(${r}, ${g}, ${b})`;
+  document.getElementById('cv-hsl').textContent=`hsl(${hsl.h}, ${hsl.s}%, ${hsl.l}%)`;
+  document.getElementById('cv-hsv').textContent=`hsv(${hsv.h}, ${hsv.s}%, ${hsv.v}%)`;
+}
+convParse('#e11d48');
+
+// ── COLOR MIXER ─────────────────────────────────────────
+function mixHexInput(which){
+  const el=document.getElementById('mix-'+which+'-hex');
+  const val=el.value.trim();
+  const hex=val.startsWith('#')?val:'#'+val;
+  if(/^#[0-9a-fA-F]{6}$/.test(hex)){
+    document.getElementById('mix-'+which).value=hex;
+    mixUpdate();
+  }
+}
+function mixUpdate(){
+  const a=document.getElementById('mix-a').value;
+  const b=document.getElementById('mix-b').value;
+  const ratio=parseInt(document.getElementById('mix-ratio').value);
+  document.getElementById('mix-a-hex').value=a;
+  document.getElementById('mix-b-hex').value=b;
+  document.getElementById('mix-ratio-val').textContent=ratio+'%';
+  const points=[0,25,ratio,75,100];
+  const cont=document.getElementById('mix-steps');
+  cont.innerHTML='';
+  points.forEach(pct=>{
+    const mixed=mixColors(a,b,pct/100);
+    const step=document.createElement('div');
+    step.className='mix-step';
+    step.onclick=()=>copyText(mixed);
+    step.innerHTML=`
+      <div class="mix-step-color" style="background:${mixed}"></div>
+      <div class="mix-step-info">${mixed}</div>
+      <div class="mix-step-pct">${pct}%</div>
+      <div class="mix-step-css">color-mix(in srgb, ${a} ${pct}%, ${b})</div>
+    `;
+    cont.appendChild(step);
+  });
+}
+mixUpdate();
+</script>
+</body>
+</html>
