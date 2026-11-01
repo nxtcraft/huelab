@@ -4,6 +4,9 @@
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-R9EW10BJGW"></script>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag("js",new Date());gtag("config","G-R9EW10BJGW");</script>
 <meta charset="UTF-8">
+<link rel="manifest" href="/huelab/manifest.json">
+<meta name="theme-color" content="#ec4899">
+<meta name="mobile-web-app-capable" content="yes">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>HueLab — Free Color Tools | Palette Generator, Gradient Maker, Contrast Checker</title>
 <meta name="description" content="Free online color tools: generate color palette from image, create CSS gradients, check WCAG contrast, convert HEX/RGB/HSL, mix colors. All in your browser — instant, no signup.">
@@ -652,5 +655,6 @@ function mixUpdate(){
 }
 mixUpdate();
 </script>
+<script>if("serviceWorker"in navigator)navigator.serviceWorker.register("/huelab/sw.js");</script>
 </body>
 </html>
