@@ -18,6 +18,7 @@
 <meta property="og:url" content="https://nxtcraft.github.io/huelab/">
 <meta name="twitter:card" content="summary_large_image">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"HueLab","url":"https://nxtcraft.github.io/huelab/","description":"Free browser-based color tools."}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"How do I extract a colour palette from an image?","acceptedAnswer":{"@type":"Answer","text":"Upload any image in the Palette Extractor tab. The tool analyses pixel colours and identifies the 5–8 most dominant colours, displaying their hex codes with one-click copy buttons."}},{"@type":"Question","name":"What colour formats does the converter support?","acceptedAnswer":{"@type":"Answer","text":"HEX (#3b82f6), RGB (rgb(59,130,246)), HSL (hsl(217,91%,60%)) and OKLCH. Enter a value in any format and the converter instantly shows all equivalents."}},{"@type":"Question","name":"Is the colour contrast checker WCAG compliant?","acceptedAnswer":{"@type":"Answer","text":"Yes. The contrast checker uses the WCAG 2.1 relative luminance formula. It reports pass/fail for AA Normal (4.5:1), AA Large (3:1), AAA Normal (7:1) and AAA Large (4.5:1) thresholds."}}]}</script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:-apple-system,'Inter',BlinkMacSystemFont,sans-serif;background:#fff1f2;color:#1c0a0d;min-height:100vh}
@@ -655,6 +656,8 @@ function mixUpdate(){
 }
 mixUpdate();
 </script>
+<style>.related-tools{background:#0f0f1a;border-top:1px solid #2d2f52;padding:1.25rem 1.5rem;margin-top:1rem}.related-tools h3{font-size:.8rem;font-weight:700;color:#c084fc;text-transform:uppercase;letter-spacing:.06em;margin-bottom:.6rem}.related-tools-grid{display:flex;flex-wrap:wrap;gap:.5rem}.related-tools a{display:inline-flex;align-items:center;gap:.35rem;padding:.35rem .8rem;border-radius:20px;border:1.5px solid #2d2f52;color:#d8b4fe;font-size:.82rem;font-weight:600;text-decoration:none;transition:all .15s}.related-tools a:hover{background:#a855f7;color:#fff;border-color:#a855f7}</style>
+<div class="related-tools"><h3>Related Tools</h3><div class="related-tools-grid"><a href="https://nxtcraft.github.io/color-contrast/">🎨 Color Contrast</a><a href="https://nxtcraft.github.io/css-gradient/">🌈 CSS Gradient</a><a href="https://nxtcraft.github.io/imagecraft/">🖼️ ImgLab</a><a href="https://nxtcraft.github.io/devlab/">🛠️ DevLab</a></div></div>
 <script>if("serviceWorker"in navigator)navigator.serviceWorker.register("/huelab/sw.js");</script>
 </body>
 </html>
